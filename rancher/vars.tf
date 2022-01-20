@@ -25,8 +25,8 @@ variable "azure_sub" {
 
 variable "azure_location" {
   type = string
-  default = "germanynorth"
-  #default = "germanywest"
+  default = "germanywestcentral"
+  #'centralus,eastasia,southeastasia,eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,northeurope,westeurope,japaneast,japanwest,brazilsouth,australiasoutheast,australiaeast,westindia,southindia,centralindia,canadacentral,canadaeast,uksouth,ukwest,koreacentral,francecentral,southafricanorth,uaenorth,australiacentral,switzerlandnorth,germanywestcentral,norwayeast,jioindiawest,westus3,swedencentral,australiacentral2'.
 }
 
 variable "azure_availability_set" {

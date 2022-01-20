@@ -11,6 +11,7 @@ provider "rancher2" {
   access_key = var.rancher_access_key
   secret_key = var.rancher_secret_key
   insecure = true
+  #TODO
 }
 
 resource "rancher2_cloud_credential" "cloud_creds_azure" {
@@ -44,6 +45,7 @@ resource "rancher2_node_template" "azure_template" {
     storage_type = "Standard_LRS"
     managed_disks = false
     disk_size = "30"
+    #TODO
   }
 }
 
@@ -62,5 +64,23 @@ resource "rancher2_cluster_template" "cluster_template" {
     default = true
   }
   description = "cluster template"
+}
+
+resource "rancher2_cluster" "cluster" {
+  name = "cluster"
+  cluster_template_id = rancher2_cluster_template.cluster_template.id
+  cluster_template_revision_id = rancher2_cluster_template.cluster_template.template_revisions.0.id
+}
+
+resource "rancher2_node_pool" "node_pool" {
+  cluster_id       = rancher2_cluster.cluster.id
+  hostname_prefix  = "terraform"
+  name             = "nodepool"
+  node_template_id = rancher2_node_template.azure_template.id
+  quantity = 1
+  control_plane = true
+  etcd = true
+  worker = true
+  #TODO
 }
 
