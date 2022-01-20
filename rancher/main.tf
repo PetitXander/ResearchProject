@@ -26,6 +26,7 @@ resource "rancher2_cloud_credential" "cloud_creds_azure" {
 resource "rancher2_node_template" "azure_template" {
   name = "Azure_template"
   cloud_credential_id = rancher2_cloud_credential.cloud_creds_azure.id
+  engine_install_url = "https://releases.rancher.com/install-docker/20.10.sh"
   azure_config {
     location = var.azure_location
     availability_set = var.azure_availability_set
@@ -40,7 +41,7 @@ resource "rancher2_node_template" "azure_template" {
     image = "canonical:UbuntuServer:18.04-LTS:latest"
     size = "Standard_B2ms"
     docker_port = "2376"
-    #open_port = [6443/tcp,2379/tcp,2380/tcp,8472/udp,4789/udp,9796/tcp,10256/tcp,10250/tcp,10251/tcp,10252/tcp]
+    open_port = ["6443/tcp","2379/tcp","2380/tcp","8472/udp","4789/udp","9796/tcp","10256/tcp","10250/tcp","10251/tcp","10252/tcp","80/tcp","30001/tcp"]
     ssh_user = "docker-user"
     storage_type = "Standard_LRS"
     managed_disks = false
@@ -56,6 +57,8 @@ resource "rancher2_cluster_template" "cluster_template" {
     name = "V1"
     cluster_config {
       rke_config {
+        kubernetes_version = "v1.21.8-rancher1-1"
+        ignore_docker_version = false
         network {
           plugin = "canal"
         }
