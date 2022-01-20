@@ -22,3 +22,14 @@ variable "azure_sub" {
   type = string
   sensitive = true
 }
+
+variable "azure_location" {
+  type = string
+  default = "germanynorth"
+  #default = "germanywest"
+}
+
+variable "azure_availability_set" {
+  type = string
+  default = "docker-machine"
+}
