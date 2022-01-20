@@ -46,3 +46,21 @@ resource "rancher2_node_template" "azure_template" {
     disk_size = "30"
   }
 }
+
+# Create a new rancher2 cluster template
+resource "rancher2_cluster_template" "cluster_template" {
+  name = "cluster_template"
+  template_revisions {
+    name = "V1"
+    cluster_config {
+      rke_config {
+        network {
+          plugin = "canal"
+        }
+      }
+    }
+    default = true
+  }
+  description = "cluster template"
+}
+
