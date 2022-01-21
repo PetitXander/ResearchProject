@@ -29,16 +29,14 @@ resource "rancher2_node_template" "vsphere_template" {
   engine_install_url = "https://releases.rancher.com/install-docker/20.10.sh"
   vsphere_config {
     datacenter = "StudentDatacenter"
-    pool = "host/StudentCluster/Resources"
     datastore = "petit-xander"
-    folder = "/StudentDatacenter/vm"
     cpu_count = "2"
     memory_size = "2048"
     disk_size = "20000"
-    creation_type = "template"
-    #todo
     network = ["VM Network"]
-    custom_attributes = ["disk.enableUUID=TRUE"]
+    cfgparam = ["disk.enableUUID=TRUE"]
+    creation_type = "template"
+    clone_from = "ubuntu-focal-20.04-cloudimg"
 
   }
 }
