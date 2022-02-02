@@ -11,7 +11,7 @@ provider "rancher2" {
   access_key = var.rancher_access_key
   secret_key = var.rancher_secret_key
   insecure = true
-  #TODO
+
 }
 
 resource "rancher2_cloud_credential" "creds_vsphere" {

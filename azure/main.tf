@@ -7,11 +7,10 @@ terraform {
 }
 
 provider "rancher2" {
-  api_url    = "https://52.143.156.208"
+  api_url    = var.rancher_url
   access_key = var.rancher_access_key
   secret_key = var.rancher_secret_key
   insecure = true
-  #TODO
 }
 
 resource "rancher2_cloud_credential" "cloud_creds_azure" {
@@ -24,53 +23,53 @@ resource "rancher2_cloud_credential" "cloud_creds_azure" {
 }
 
 resource "rancher2_node_template" "azure_template" {
-  name = "Azure_template"
+  name = var.node_temp_name
   cloud_credential_id = rancher2_cloud_credential.cloud_creds_azure.id
   engine_install_url = "https://releases.rancher.com/install-docker/20.10.sh"
   azure_config {
     location = var.azure_location
-    availability_set = var.azure_availability_set
-    fault_domain_count = "3"
-    update_domain_count = "5"
-    resource_group = "docker-machine"
-    subnet = "docker-machine"
-    subnet_prefix = "192.168.0.0/16"
-    vnet = "docker-machine-vnet"
-    static_public_ip = false
-    nsg = "docker-machine-nsg"
-    image = "canonical:UbuntuServer:18.04-LTS:latest"
-    size = "Standard_B2ms"
-    docker_port = "2376"
+    availability_set = var.azure_availability_set_name
+    fault_domain_count = var.node_fault_domain
+    update_domain_count = var.node_update_domain_count
+    resource_group = var.node_resourcegroup_name
+    subnet = var.node_subnet_name
+    subnet_prefix = var.node_subnet_prefix
+    vnet = var.node_vnet_name
+    static_public_ip = var.node_static_public_ip
+    nsg = var.node_nsg_name
+    image = var.node_image
+    size = var.node_size
+    docker_port = var.node_docker_port
     open_port = ["6443/tcp","2379/tcp","2380/tcp","8472/udp","4789/udp","9796/tcp","10256/tcp","10250/tcp","10251/tcp","10252/tcp","80/tcp","30001/tcp"]
-    ssh_user = "docker-user"
-    storage_type = "Standard_LRS"
-    managed_disks = false
-    disk_size = "30"
-    #TODO
+    ssh_user = var.node_ssh_user
+    storage_type = var.node_storage_type
+    managed_disks = var.node_managed_disk
+    disk_size = var.node_disk_size
+
   }
 }
 
 # Create a new rancher2 cluster template
 resource "rancher2_cluster_template" "cluster_template" {
-  name = "cluster_template"
+  name = var.cluster_temp_name
   template_revisions {
-    name = "V1"
+    name = var.cluster_temp_rev
     cluster_config {
       rke_config {
-        kubernetes_version = "v1.21.8-rancher1-1"
-        ignore_docker_version = false
+        kubernetes_version = var.cluster_temp_kubernetes_version
+        ignore_docker_version = var.cluster_temp_ignore_docker_version
         network {
-          plugin = "canal"
+          plugin = var.cluster_temp_network_plugin
         }
       }
     }
     default = true
   }
-  description = "cluster template"
+  description = var.cluster_temp_description
 }
 
 resource "rancher2_cluster" "cluster" {
-  name = "cluster"
+  name = var.cluster_name
   cluster_template_id = rancher2_cluster_template.cluster_template.id
   cluster_template_revision_id = rancher2_cluster_template.cluster_template.template_revisions.0.id
 }
@@ -84,6 +83,6 @@ resource "rancher2_node_pool" "node_pool" {
   control_plane = true
   etcd = true
   worker = true
-  #TODO
+
 }
 
